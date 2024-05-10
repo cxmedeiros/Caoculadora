@@ -9,21 +9,21 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var years: Int? = nil // para aparecer o texto logo
+    @State var years: Int? = nil // para aparecer o texto logo 
     @State var months: Int? = nil
     @State var result: Int?
-    let portes = ["Pequeno", "Médio", "Grande"]
-    @State var porte : String = "Pequeno"
+    @State var porteSelecionado: Porte = .pequeno
     
     var body: some View {
         
         VStack(alignment: .leading) { //alinhar os texto para a esquerda
             Text("Qual a idade do seu cão?")
-                .font(.system(size: 24))
+                .font(.header5)
                 //.padding()
             
             Spacer()
             Text("Anos")
+                .font(.body1)
             TextField(
             "Quantos anos completos seu cão tem.",
              value: $years,
@@ -31,6 +31,7 @@ struct ContentView: View {
             )
             
             Text("Meses")
+                .font(.body1)
             TextField(
                 "E quantos meses além disso ele tem.",
                 value: $months,
@@ -38,9 +39,10 @@ struct ContentView: View {
             )
             
             Text("Porte")
-            Picker("Porte", selection: $porte) {
-                ForEach(portes, id: \.self) { porte in
-                    Text(porte)
+                .font(.body1)
+            Picker("Porte", selection: $porteSelecionado) {
+                ForEach(Porte.allCases, id: \.self) { porte in
+                    Text(porte.rawValue) // rawValue pega o valor associado ao tipo string, o capitalizes faz as primeiras letras serem maiusculas
                         .tag(porte)
                 }
             }
@@ -49,7 +51,6 @@ struct ContentView: View {
             
             Divider()
                 .background(.blue)
-            
             
             if let result {
                 Text("Seu cachorro tem, em idade humana...")
@@ -64,11 +65,13 @@ struct ContentView: View {
                     .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
                     .shadow(radius: 20)
             }
+            
             Spacer()
             Button(action: processYears, label: {
                 ZStack {
                     Color(.blue)
                     Text("Cãocular")
+                        .font(.body1)
                         .foregroundStyle(.white)
                 }
             })
@@ -82,7 +85,6 @@ struct ContentView: View {
         .fontDesign(.rounded)
         .padding()
     }
-    
     
     func processYears () {
         
@@ -100,9 +102,10 @@ struct ContentView: View {
             return
         }
         
-        result = years * 7 + months * 7 / 12
+        result = porteSelecionado.conversaoDeIdade(anos: years, meses: months)
+        
 //        guard let years else {
-//            
+//
 //            return
 //        }
         
